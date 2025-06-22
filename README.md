@@ -130,17 +130,9 @@ streamlit run app/app.py
 
 Place your example outputs and supporting materials in the project root as follows:
 
-* **`images/`** – store all screenshots (e.g., `flagged_frames.png`, `stats_table.png`).
-* **`references/`** – store any prompt files, prompt logs, or other reference materials.
+* **`images/`** – stores all screenshots 
+* **`references/`** – stores any prompt files, prompt logs, or other reference materials.
 
-To include images in this README, use:
 
-```markdown
-![Flagged Frames](images/flagged_frames.png)
-![Stats Table](images/stats_table.png)
-```
-
-* **flagged\_frames.png**: a collage of thumbnails showing frames where camera movement was detected.
-* **stats\_table.png**: the full table of frame-by-frame movement statistics.
 
 Files in `references/` will not be rendered here but can be reviewed by cloning the repository and inspecting that folder.

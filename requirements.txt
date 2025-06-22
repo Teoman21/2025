@@ -1,0 +1,7 @@
+streamlit
+opencv-python-headless
+numpy
+Pillow
+requests
+datasets
+huggingface_hub
