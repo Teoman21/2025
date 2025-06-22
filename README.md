@@ -1,95 +1,146 @@
-# ATP Core Talent 2025
-# Core Talent AI Coder Challenge: Camera Movement Detection
+# Camera Movement Detection
 
-**Detecting Significant Camera Movement Using Image Recognition**
+A web application for detecting significant global camera movement (shake, pan, tilt) in video sequences. It uses optical flow and RANSAC to distinguish true camera shifts from object motion and highlights frames where the camera itself moves.
 
 ---
 
-## Scenario
+## Overview
 
-Imagine you are tasked with building a component for a smart camera system. Your goal is to detect **significant movement**—for example, if someone moves or tilts the camera or if the entire camera is knocked or shifted. This is different from simply detecting moving objects in the scene.
+This project implements a camera movement detection component suitable for smart camera systems. Given a video file, it:
+
+1. **Loads** frames from the video file.
+2. **Tracks** feature points across consecutive frames using Shi–Tomasi corner detection and Lucas–Kanade optical flow.
+3. **Estimates** a global affine transform with RANSAC to measure translation and rotation between frames.
+4. **Computes** a movement score for each frame pair by combining translation distance and rotation angle.
+5. **Flags** frames where the score exceeds a configurable threshold (static or adaptive).
+6. **Classifies** flagged frames as camera movement versus object movement by comparing RANSAC inlier and outlier counts.
+
+A Streamlit front end wraps the algorithm, allowing users to upload a video, adjust parameters, and visualize results.
+
+---
+
+## Features
+
+* Global movement detection using optical flow and RANSAC
+* Adaptive thresholding (mean + k·std) for automatic sensitivity
+* Camera vs object motion classification via inlier/outlier ratio
+* Interactive UI built with Streamlit
+* Modular code structure: `config.py`, `prep_data.py`, `movement_detector.py`, `app.py`
+* A user-friendly interface for non-technical users that explains what each parameter does when they hover their mouse over the “?” icon.
 
 ---
 
 ## Requirements
 
-1. **Input:**
+* Python 3.8 or higher
+* OpenCV (`opencv-python`)
+* NumPy
+* Streamlit
 
-   * A sequence of images or frames (at least 10-20), simulating a fixed camera, with some frames representing significant camera movement (tilt, pan, large translation), and others showing a static scene or minor background/object motion.
-   * You may use public datasets, generate synthetic data, or simulate with your own webcam.
+Install dependencies with:
 
-     * Example: [CameraBench Dataset on Hugging Face](https://huggingface.co/datasets/syCen/CameraBench)
-2. **Task:**
-
-   * Build an algorithm (**Python preferred**) that analyzes consecutive frames and detects when significant camera movement occurs.
-   * Output a list of frames (by index/number) where significant movement is detected.
-3. **Expected Features:**
-
-   * **Basic:** Frame differencing or feature matching to detect large global shifts (e.g., using OpenCV’s ORB/SIFT/SURF, optical flow, or homography).
-   * **Bonus:** Distinguish between camera movement and object movement within the scene (e.g., use keypoint matching, estimate transformation matrices, etc.).
-4. **Deployment:**
-
-   * Wrap your solution in a small web app (**Streamlit, Gradio, or Flask**) that allows the user to upload a sequence of images (or a video), runs the detection, and displays the result.
-   * Deploy the app on a public platform (**Vercel, Streamlit Cloud, Hugging Face Spaces**, etc.)
-5. **Deliverables:**
-
-   * Public app URL
-   * GitHub repo (with code and requirements.txt)
-   * README (explaining your approach, dataset, and how to use the app)
-
-     * **Sample README Outline:**
-
-       * Overview of your approach and movement detection logic
-       * Any challenges or assumptions
-       * How to run the app locally
-       * Link to the live app
-       * Example input/output screenshots
-   * AI Prompts or Chat History (if used for support)
+```bash
+pip install -r requirements.txt
+```
 
 ---
 
-## Evaluation Rubric
+## Installation
 
-| Criteria           | Points | Details                                                                                    |
-| ------------------ | ------ | ------------------------------------------------------------------------------------------ |
-| **Correctness**    | 5      | Accurately detects significant camera movement; low false positives/negatives.             |
-| **Implementation** | 5      | Clean code, good use of OpenCV or relevant libraries, modular structure.                   |
-| **Deployment**     | 5      | App is online, easy to use, and functions as described.                                    |
-| **Innovation**     | 3      | Advanced techniques (feature matching, transformation estimation, clear object vs camera). |
-| **Documentation**  | 2      | Clear README, instructions, and concise explanation of method/logic.                       |
+1. **Clone** the repository:
 
----
+   ```bash
+   ```
 
-## Suggested Stack
+git clone [https://github.com/YourUsername/2025.git](https://github.com/YourUsername/2025.git)
+cd 2025
 
-* **Python** or **C#**
-* **OpenCV** for computer vision
-* **Streamlit**, **Gradio**, or a **shadcn-powered Vercel site** for quick web UI
-* **GitHub** for code repo, **Streamlit Cloud**, **Hugging Face Spaces**, or **Vercel** for deployment
+````
+2. **Install** dependencies:
+   ```bash
+pip install -r requirements.txt
+````
 
 ---
 
-# 📋 Candidate Instructions
+## Usage
 
-1. **Fork this repository** (or start your own repository with the same structure).
-2. **Implement your movement detection algorithm** in `movement_detector.py`.
-3. **Develop a simple web app** (`app.py`) that allows users to upload images/sequences and view detection results.
-4. **Deploy your app** on a public platform (e.g., Streamlit Cloud, Hugging Face Spaces, Vercel, Heroku) and **share both your deployed app URL and GitHub repository link**.
-5. **Document your work**: Include a `README.md` that explains your approach, how to run your code, and sample results (with screenshots or example outputs).
+Run the Streamlit application locally:
 
----
+```bash
+streamlit run app/app.py
+```
 
-**Deadline:**
-🕓 **27.06.2025**
+1. In the sidebar, upload a video file (`.mp4`, `.avi`, `.mov`).
+2. (Optional) Expand **Advanced Settings** to tune:
 
----
-
-**Plagiarism Policy:**
-
-* This must be **individual, AI-powered work**.
-* You may use open-source libraries, but you **must cite** all external resources and code snippets.
-* Do not submit work copied from others or from the internet without proper acknowledgment.
+   * Movement threshold
+   * Number of corners, quality level, minimum distance for feature tracking
+   * Frame resizing and maximum frames to process
+3. Click **Run Movement Detection**.
+4. Review the flagged frame thumbnails and the frame-by-frame statistics table.
 
 ---
 
-**Good luck! Show us your best hands-on AI skills!**
+## Project Structure
+
+```
+2025/
+├── config.py              # Default algorithm parameters
+├── requirements.txt       # Python dependencies
+├── src/
+│   ├── prep_data.py       # Functions to load video frames
+│   └── movement_detector.py # Optical flow + RANSAC detection logic
+└── app/
+    └── app.py             # Streamlit UI
+```
+
+---
+
+## Algorithm Details
+
+### Data Loading
+
+* `load_video()`: reads up to N grayscale frames from a video file using OpenCV.
+
+### Optical Flow and RANSAC
+
+* Detect Shi–Tomasi corners in the first frame.
+* Track them in the next frame with Lucas–Kanade optical flow (`cv2.calcOpticalFlowPyrLK`).
+* Fit an affine transform via `cv2.estimateAffinePartial2D(..., method=RANSAC)` on matched points.
+
+### Movement Scoring
+
+* Extract translation (`dx`, `dy`) and rotation angle (`da`) from the affine matrix.
+* Score = √(dx² + dy²) + |da|.
+
+### Thresholding
+
+* **Static**: use a fixed threshold defined in `config.py`.
+* **Adaptive**: threshold = mean(scores) + k·std(scores).
+
+### Classification
+
+* Inliers ≥ outliers ⇒ camera movement.
+* Inliers < outliers ⇒ object movement.
+
+---
+
+## Sample Results
+
+Place your example outputs and supporting materials in the project root as follows:
+
+* **`images/`** – store all screenshots (e.g., `flagged_frames.png`, `stats_table.png`).
+* **`references/`** – store any prompt files, prompt logs, or other reference materials.
+
+To include images in this README, use:
+
+```markdown
+![Flagged Frames](images/flagged_frames.png)
+![Stats Table](images/stats_table.png)
+```
+
+* **flagged\_frames.png**: a collage of thumbnails showing frames where camera movement was detected.
+* **stats\_table.png**: the full table of frame-by-frame movement statistics.
+
+Files in `references/` will not be rendered here but can be reviewed by cloning the repository and inspecting that folder.
