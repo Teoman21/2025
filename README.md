@@ -135,4 +135,4 @@ Place your example outputs and supporting materials in the project root as follo
 
 
 
-Files in `references/` will not be rendered here but can be reviewed by cloning the repository and inspecting that folder.
+Files in `references/` may not be rendered here but can be reviewed by cloning the repository and inspecting that folder.
