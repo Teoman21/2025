@@ -52,8 +52,11 @@ pip install -r requirements.txt
    ```bash
    ```
 
-git clone [https://github.com/YourUsername/2025.git](https://github.com/YourUsername/2025.git)
-cd 2025
+git clone https://github.com/Teoman21/2025.git
+cd 2025 
+cd camera-movement-detection
+cd app
+streamlit run app.py
 
 ````
 2. **Install** dependencies:
@@ -117,8 +120,7 @@ streamlit run app/app.py
 ### Thresholding
 
 * **Static**: use a fixed threshold defined in `config.py`.
-* **Adaptive**: threshold = mean(scores) + k·std(scores).
-
+* 
 ### Classification
 
 * Inliers ≥ outliers ⇒ camera movement.
