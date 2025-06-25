@@ -49,13 +49,13 @@ pip install -r requirements.txt
 
 1. **Clone** the repository:
 
-
+```bash
 git clone https://github.com/Teoman21/2025.git
 cd 2025 
 cd camera-movement-detection
 cd app
 streamlit run app.py
-
+```
 ````
 
 2. **Install** dependencies:
